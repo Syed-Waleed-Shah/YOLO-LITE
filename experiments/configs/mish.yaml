@@ -1,6 +1,6 @@
 activation: mish
 run_name: mish_run
-epochs: 10
+epochs: 3
 batch_size: 8
 learning_rate: 0.001
 amp: true

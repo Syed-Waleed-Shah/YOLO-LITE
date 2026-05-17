@@ -22,7 +22,7 @@ VOC_CLASSES = (
 )
 
 class VOCDataset(Dataset):
-    def __init__(self, root, year="2007", image_set="train", input_size=224, transform=False):
+    def __init__(self, root, year="2007", image_set="train", input_size=224, transform=False, subset_size=None):
         self.root = root
         self.year = year
         self.image_set = image_set
@@ -30,16 +30,22 @@ class VOCDataset(Dataset):
         self.transform = transform
         
         os.makedirs(root, exist_ok=True)
-        # We use standard torchvision dataset to download and extract
+        # Check if dataset already exists to prevent re-extracting
+        needs_download = not os.path.exists(os.path.join(root, "VOCdevkit"))
         self.dataset = datasets.VOCDetection(
-            root, year=year, image_set=image_set, download=True
+            root, year=year, image_set=image_set, download=needs_download
         )
+        
+        if subset_size is not None:
+            self.indices = list(range(min(subset_size, len(self.dataset))))
+        else:
+            self.indices = list(range(len(self.dataset)))
 
     def __len__(self):
-        return len(self.dataset)
+        return len(self.indices)
 
     def __getitem__(self, idx):
-        image, target = self.dataset[idx]
+        image, target = self.dataset[self.indices[idx]]
         
         width, height = image.size
         

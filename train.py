@@ -56,18 +56,19 @@ def train():
     # Optional: Mixed Precision
     scaler = torch.cuda.amp.GradScaler(enabled=cfg.amp)
 
-    # Dataloader
+    # Dataloader with reduced dataset size for faster experiments
     train_dataset = VOCDataset(cfg.data_root, year="2012", image_set="trainval", 
-                               input_size=cfg.input_size, transform=True)
+                               input_size=cfg.input_size, transform=True, subset_size=200)
     
     train_loader = DataLoader(train_dataset, batch_size=cfg.batch_size, 
                               shuffle=True, num_workers=cfg.num_workers, 
                               collate_fn=collate_fn, pin_memory=cfg.pin_memory)
     
-    # We will simulate validation on the same for this lightweight script or a subset
-    # In a real run we'd use VOC2007 test set, but for this study template, 
-    # we just want to ensure it runs
-    val_loader = DataLoader(train_dataset, batch_size=cfg.batch_size, 
+    # We will simulate validation on a small subset
+    val_dataset = VOCDataset(cfg.data_root, year="2012", image_set="trainval", 
+                             input_size=cfg.input_size, transform=False, subset_size=50)
+    
+    val_loader = DataLoader(val_dataset, batch_size=cfg.batch_size, 
                             shuffle=False, num_workers=cfg.num_workers, 
                             collate_fn=collate_fn, pin_memory=cfg.pin_memory)
 
