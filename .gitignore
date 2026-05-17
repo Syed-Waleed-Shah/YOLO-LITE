@@ -1,0 +1,12 @@
+# Dataset
+/data/
+
+# Checkpoints
+checkpoints/
+
+# Logs and Outputs
+logs/*.csv
+logs/plots/*.png
+output_*.jpg
+__pycache__/
+*.pyc
